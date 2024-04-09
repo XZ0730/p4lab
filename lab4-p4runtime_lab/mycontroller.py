@@ -144,6 +144,62 @@ def printCounter(p4info_helper, sw, counter_name, index):
                 sw.name, counter_name, index,
                 counter.data.packet_count, counter.data.byte_count
             ))
+            
+            if index==100 :
+                file = open("S1S2.txt","a")
+                
+                if sw.name=="s1":
+                    print("s1 - > s2",file=file)
+                    print("s1 send %d packet, counter num:%d"%(counter.data.packet_count,index),file=file)
+                else:
+                    print("s2 receive %d packet, counter num:%d"%(counter.data.packet_count,index),file=file)
+                file.close()
+            elif index==200 :
+                file = open("S1S2.txt","a")
+                
+                if sw.name=="s2":
+                    print("s2 - > s1",file=file)
+                    print("s2 send %d packet, counter num:%d"%(counter.data.packet_count,index),file=file)
+                else:
+                    print("s1 receive %d packet, counter num:%d"%(counter.data.packet_count,index),file=file)
+                file.close()
+            elif index==300:
+                file = open("S1S3.txt","a")
+                
+                if sw.name=="s1":
+                    print("s1 - > s3",file=file)
+                    print("s1 send %d packet, counter num:%d"%(counter.data.packet_count,index),file=file)
+                else:
+                    print("s3 receive %d packet, counter num:%d"%(counter.data.packet_count,index),file=file)
+                file.close()
+            elif index==400:
+                file = open("S1S3.txt","a")
+                
+                if sw.name=="s3":
+                    print("s3 - > s1",file=file)
+                    print("s3 send %d packet, counter num:%d\n"%(counter.data.packet_count,index),file=file)
+                else:
+                    print("s1 receive %d packet, counter num:%d\n"%(counter.data.packet_count,index),file=file)
+                file.close()
+            elif index==500:
+                file = open("S2S3.txt","a")
+                
+                if sw.name=="s2":
+                    print("s2 - > s3",file=file)
+                    print("s2 send %d packet, counter num:%d\n"%(counter.data.packet_count,index),file=file)
+                else:
+                   print("s3 receive %d packet, counter num:%d\n"%(counter.data.packet_count,index),file=file)
+                file.close()
+            elif index==600:
+                file = open("S2S3.txt","a")
+                
+                if sw.name=="s3":
+                    print("s3 - > s2",file=file)
+                    print("s3 send %d packet, counter num:%d\n"%(counter.data.packet_count,index),file=file)
+                else:
+                    print("s2 receive %d packet, counter num:%d\n"%(counter.data.packet_count,index),file=file)
+                file.close()
+            
 
 def printGrpcError(e):
     print("gRPC Error:", e.details(), end=' ')
@@ -213,18 +269,34 @@ def main(p4info_file_path, bmv2_file_path):
         while True:
             sleep(2)
             print('\n----- Reading tunnel counters -----')
+            print("s1 -> s2")
             printCounter(p4info_helper, s1, "MyIngress.ingressTunnelCounter", 100)
             printCounter(p4info_helper, s2, "MyIngress.egressTunnelCounter", 100)
+            print("\n")
+            print("s2 -> s1")
+            
             printCounter(p4info_helper, s2, "MyIngress.ingressTunnelCounter", 200)
             printCounter(p4info_helper, s1, "MyIngress.egressTunnelCounter", 200)
+            print("\n")
+            print("s1 -> s3")
+            
             printCounter(p4info_helper, s1, "MyIngress.ingressTunnelCounter", 300)
             printCounter(p4info_helper, s3, "MyIngress.egressTunnelCounter", 300)
+            print("\n")
+            print("s3 -> s1")
+            
             printCounter(p4info_helper, s3, "MyIngress.ingressTunnelCounter", 400)
             printCounter(p4info_helper, s1, "MyIngress.egressTunnelCounter", 400)
+            print("\n")
+            print("s2 -> s3")
             printCounter(p4info_helper, s2, "MyIngress.ingressTunnelCounter", 500)
             printCounter(p4info_helper, s3, "MyIngress.egressTunnelCounter", 500)
+            print("\n")
+            print("s3 -> s2")
             printCounter(p4info_helper, s3, "MyIngress.ingressTunnelCounter", 600)
             printCounter(p4info_helper, s2, "MyIngress.egressTunnelCounter", 600)
+            print("\n")
+            print("--- Finished ---\n")
     except KeyboardInterrupt:
         print(" Shutting down.")
     except grpc.RpcError as e:
